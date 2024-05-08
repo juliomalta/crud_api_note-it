@@ -35,7 +35,18 @@ def get_task(id):
         if task.id == id:
             return jsonify(task.to_dict())
     return jsonify({'message': 'Task not found!'}), 404
-    
+
+@app.route('/tasks/<int:id>', methods=['PUT'])
+def update_task(id):
+    data = request.get_json()
+    for task in tasks:
+        if task.id == id:
+            task.title = data['title']
+            task.description = data.get('description', task.description)
+            task.status = data.get('status', task.status)
+            return jsonify({'message': 'Task updated successfully!'})
+    return jsonify({'message': 'Task not found!'}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True) 
