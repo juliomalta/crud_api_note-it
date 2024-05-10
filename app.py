@@ -13,7 +13,7 @@ def create_task():
     task_id_control += 1
     tasks.append(new_task)
     print(tasks)
-    return jsonify({'message': 'Tarefa criada com sucesso!'}), 201
+    return jsonify({'message': 'Tarefa criada com sucesso!', 'id': new_task.id}), 201
 # O método get_json() é usado para pegar os dados enviados no corpo da requisição, e o segundo método get() é usado para pegar os dados do dicionário data, se não existir, ele retorna um valor padrão, que é uma string vazia. O title entretanto, é obrigatório, por isso não tem um valor padrão.
 
 @app.route('/tasks', methods=['GET'])
@@ -24,7 +24,7 @@ def list_tasks():
         'tasks': tasks_dict,
         'total': len(tasks_dict)
     }
-    return jsonify(output)
+    return jsonify(output), 200
 #     task_list = []
 #     for task in tasks:
 #         task_list.append(task.to_dict())
@@ -44,7 +44,7 @@ def update_task(id):
             task.title = data['title']
             task.description = data.get('description', task.description)
             task.status = data.get('status', task.status)
-            return jsonify({'message': 'Tarefa atualizada com sucesso!'})
+            return jsonify({'message': 'Tarefa atualizada com sucesso!'}), 200
     return jsonify({'message': 'Tarefa não encontrada!'}), 404
 
 @app.route('/tasks/<int:id>', methods=['DELETE'])
@@ -56,7 +56,7 @@ def delete_task(id):
             break
     if target_task is not None:
         tasks.remove(target_task)
-        return jsonify({'message': 'Tarefa deletada com sucesso!'})
+        return jsonify({'message': 'Tarefa deletada com sucesso!'}), 200
     return jsonify({'message': 'Tarefa não encontrada!'}), 404
 
 # Reparar que evitei fazer a remoção dentro da iteração, pois pode causar erros, alterando o tamanho da lista, por exemplo.
