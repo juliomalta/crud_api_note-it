@@ -38,21 +38,37 @@ def test_read_multi_task():
   # assert response_json['tasks'] == 1 ; assim é para testar se a quantidade de tarefas é igual a 1, e não se tem tarefas em geral.
 
 
-# def test_update_task():
-#   response = requests.put(f'{BASE_URL}/tasks/1', json={'title': 'Tarefa de teste atualizada', 'description': 'Descrição da tarefa atualizada', 'status': True})
-#   assert response.status_code == 200
-#   response_json = response.json()
-#   assert response_json['message'] == 'Tarefa atualizada com sucesso!'
-#   assert response_json['title'] == 'Tarefa de teste atualizada'
-#   assert response_json['description'] == 'Descrição da tarefa atualizada'
-#   assert response_json['status'] == True
+def test_update_task():
+  task_id = tasks[0]
+  payload = {
+    'title': 'Tarefa de teste atualizada',
+    'description': 'Descrição da tarefa atualizada',
+    'status': True
+  }
+  
+  response = requests.put(f'{BASE_URL}/tasks/{task_id}', json=payload)
+  assert response.status_code == 200
+  response_json = response.json()
+  assert response_json['message'] == 'Tarefa atualizada com sucesso!'
 
-# def test_delete_task():
-#   response = requests.delete(f'{BASE_URL}/tasks/1')
-#   assert response.status_code == 200
+# Verificação do conteúdo atualizado
+  response = requests.get(f'{BASE_URL}/tasks/{task_id}')
+  assert response.status_code == 200
+  response_json = response.json()
+  assert response_json['title'] == payload['title']
+  assert response_json['description'] == payload['description']
+  assert response_json['status'] == payload['status']
 
-# def test_error_handling():
-#   response = requests.get(f'{BASE_URL}/tasks/1')
-#   assert response.status_code == 404
-#   response_json = response.json()
-#   assert response_json['message'] == 'Tarefa não encontrada!'
+def test_delete_task():
+  task_id = tasks[0]
+  response = requests.delete(f'{BASE_URL}/tasks/{task_id}')
+  assert response.status_code == 200
+
+  response = requests.get(f'{BASE_URL}/tasks/{task_id}')
+  assert response.status_code == 404
+
+def test_error_handling():
+  response = requests.get(f'{BASE_URL}/tasks/100')
+  assert response.status_code == 404
+  response_json = response.json()
+  assert response_json['message'] == 'Tarefa não encontrada!'
